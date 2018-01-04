@@ -12,8 +12,7 @@ namespace ngs {
 
 
 enum {
-  PANEL_SIZE = 64,
-  GRID_NUM = 13,
+  PANEL_SIZE = 20,
 };
 
 
@@ -21,7 +20,7 @@ struct View {
   // パネル
   std::vector<ci::TriMesh> panel_models;
 
-
+  ci::TriMesh blank_model;
 
 };
 
@@ -105,6 +104,8 @@ View createView() {
     view.panel_models.push_back(PLY::load(file));
   }
 
+  view.blank_model = PLY::load("blank.ply");
+
   return view;
 }
 
@@ -118,6 +119,7 @@ void drawPanel(int number, glm::ivec2 pos, u_int rotation, const View& view) {
   };
 
   ci::gl::pushModelView();
+  ci::gl::translate(pos.x, 0.0f, pos.y);
   ci::gl::rotate(ci::Vec3f(0.0f, r_tbl[rotation], 0.0f));
   ci::gl::draw(view.panel_models[number]);
   ci::gl::popModelView();
@@ -130,20 +132,21 @@ void drawFieldPanels(const std::vector<PanelStatus>& panels, const View& view) {
   }
 }
 
+// Fieldの置ける場所をすべて表示
+void drawFieldBlank(const std::vector<glm::ivec2>& blank, const View& view) {
+  for (const auto& pos : blank) {
+    glm::ivec2 p = pos * int(PANEL_SIZE);
+
+    ci::gl::pushModelView();
+    ci::gl::translate(p.x, 0.0f, p.y);
+    ci::gl::draw(view.blank_model);
+    ci::gl::popModelView();
+  }
+}
 
 }
 
 #if 0
-
-
-// Fieldの置ける場所をすべて表示
-void drawFieldBlank(const std::vector<glm::ivec2>& blank) {
-  for (const auto& p : blank) {
-    drawFillBox(p.x * PANEL_SIZE - PANEL_SIZE / 2, p.y * PANEL_SIZE - PANEL_SIZE / 2,
-                PANEL_SIZE, PANEL_SIZE,
-                Color(0.3, 0.3, 0.3));
-  }
-}
 
 
 

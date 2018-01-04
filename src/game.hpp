@@ -47,7 +47,10 @@ struct Game {
     return field.enumeratePanels();
   }
 
-
+  // パネルを置ける箇所を列挙
+  std::vector<glm::ivec2> enumerateBlank() {
+    return field.searchBlank();
+  }
 
 
 private:

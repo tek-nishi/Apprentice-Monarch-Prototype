@@ -116,6 +116,9 @@ public:
     auto panels = game->enumeratePanels();
     ngs::drawFieldPanels(panels, view);
 
+    auto blank = game->enumerateBlank();
+    ngs::drawFieldBlank(blank, view);
+
   }
 
 };
