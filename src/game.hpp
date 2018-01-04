@@ -35,30 +35,59 @@ struct Game {
     
     // 最初のパネルを設置
     field.addPanel(START_PANEL, {0, 0}, 0);
+    getNextPanel();
+
+    fieldUpdate();
   }
 
 
-  void update() {
+  // パネルが置けるか調べる
+  bool canPutToBlank(glm::ivec2 field_pos) {
+    bool can_put = false;
+    
+    if (std::find(std::begin(blank), std::end(blank), field_pos) != std::end(blank)) {
+      can_put = canPutPanel(panels[hand_panel], field_pos, hand_rotation,
+                            field, panels);
+    }
+
+    return can_put;
   }
 
 
-  // フィールド上のパネルを列挙
-  std::vector<PanelStatus> enumeratePanels() {
-    return field.enumeratePanels();
+  // 操作
+  void rotationHandPanel() {
+    hand_rotation = (hand_rotation + 1) % 4;
   }
 
-  // パネルを置ける箇所を列挙
-  std::vector<glm::ivec2> enumerateBlank() {
-    return field.searchBlank();
+
+  // 手持ちパネル情報
+  u_int getHandPanel() const {
+    return hand_panel;
   }
+
+  u_int getHandRotation() const {
+    return hand_rotation;
+  }
+
+  // フィールド情報
+  const std::vector<PanelStatus>& getFieldPanels() const {
+    return field_panels;
+  }
+
+  const std::vector<glm::ivec2>& getBlankPositions() const {
+    return blank;
+  };
 
 
 private:
   std::vector<Panel> panels;
 
   std::vector<int> waiting_panels;
-  u_int hand_rotation  = 0;
-  bool check_all_blank = true;
+  int hand_panel;
+  u_int hand_rotation;
+  bool check_all_blank;
+
+  bool can_put;
 
   Field field;
 
@@ -71,6 +100,29 @@ private:
   // 完成した教会
   std::vector<glm::ivec2> completed_church;
 
+  // 列挙したフィールド上のパネル
+  std::vector<PanelStatus> field_panels;
+  // 列挙した置ける箇所
+  std::vector<glm::ivec2> blank;
+
+
+  bool getNextPanel() {
+    if (waiting_panels.empty()) return false;
+
+    hand_panel      = waiting_panels[0];
+    hand_rotation   = 0;
+    check_all_blank = true;
+
+    waiting_panels.erase(std::begin(waiting_panels));
+
+    return true;
+  }
+
+  // 各種情報を収集
+  void fieldUpdate() {
+    field_panels = field.enumeratePanels();
+    blank        = field.searchBlank();
+  }
 };
 
 }

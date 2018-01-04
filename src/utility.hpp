@@ -5,6 +5,8 @@
 //
 
 
+namespace ngs {
+
 // xをyで丸めこむ
 int roundValue(int x, int y) {
   return (x > 0) ? (x + y / 2) / y
@@ -25,3 +27,5 @@ struct LessVec {
     return false;
   }
 };
+
+}

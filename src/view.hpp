@@ -21,6 +21,7 @@ struct View {
   std::vector<ci::TriMesh> panel_models;
 
   ci::TriMesh blank_model;
+  ci::TriMesh selected_model;
 
 };
 
@@ -105,12 +106,13 @@ View createView() {
   }
 
   view.blank_model = PLY::load("blank.ply");
+  view.selected_model = PLY::load("selected.ply");
 
   return view;
 }
 
 // パネルを１枚表示
-void drawPanel(int number, glm::ivec2 pos, u_int rotation, const View& view) {
+void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view) {
   const float r_tbl[] = {
     0.0f,
     180.0f * 0.5f,
@@ -119,10 +121,14 @@ void drawPanel(int number, glm::ivec2 pos, u_int rotation, const View& view) {
   };
 
   ci::gl::pushModelView();
-  ci::gl::translate(pos.x, 0.0f, pos.y);
+  ci::gl::translate(pos.x, pos.y, pos.z);
   ci::gl::rotate(ci::Vec3f(0.0f, r_tbl[rotation], 0.0f));
   ci::gl::draw(view.panel_models[number]);
   ci::gl::popModelView();
+}
+
+void drawPanel(int number, glm::ivec2 pos, u_int rotation, const View& view) {
+  drawPanel(number, glm::vec3(pos.x, 0.0f, pos.y), rotation, view);
 }
 
 // Fieldのパネルをすべて表示
@@ -143,6 +149,17 @@ void drawFieldBlank(const std::vector<glm::ivec2>& blank, const View& view) {
     ci::gl::popModelView();
   }
 }
+
+// 置けそうな箇所をハイライト
+void drawFieldSelected(glm::ivec2 pos, const View& view) {
+  glm::ivec2 p = pos * int(PANEL_SIZE);
+
+  ci::gl::pushModelView();
+  ci::gl::translate(p.x, 0.0f, p.y);
+  ci::gl::draw(view.selected_model);
+  ci::gl::popModelView();
+}
+
 
 }
 
