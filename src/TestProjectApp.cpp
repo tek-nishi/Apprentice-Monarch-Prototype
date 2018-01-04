@@ -53,6 +53,11 @@ class TestProjectApp : public AppNative {
   bool can_put = false;
 
 
+  u_int frame_counter = 0;
+
+
+
+
 public:
   void prepareSettings(Settings* settings) override {
     settings->setWindowSize(1024, 720);
@@ -70,7 +75,7 @@ public:
     // UIカメラ
     auto half_size = getWindowSize() / 2;
     ui_camera = CameraOrtho(-half_size.x, half_size.x,
-                            half_size.y, -half_size.y,
+                            -half_size.y, half_size.y,
                             -1, 1);
     ui_camera.setEyePoint(Vec3f(0, 0, 0));
     ui_camera.setCenterOfInterestPoint(Vec3f(0, 0, -1));
@@ -87,6 +92,7 @@ public:
     // 表示
     view = ngs::createView();
     font = std::make_shared<ngs::Font>("MAIAN.TTF");
+    font->size(60);
   }
 
 
@@ -194,6 +200,14 @@ public:
       game = std::make_shared<ngs::Game>(panels);
       playing_mode = TITLE;
     }
+    if (code == KeyEvent::KEY_t) {
+      // 時間停止
+
+    }
+    if (code == KeyEvent::KEY_e) {
+      // 強制終了
+      game->endPlay();
+    }
 #endif
   }
 
@@ -224,6 +238,8 @@ public:
       }
       break;
     }
+
+    frame_counter += 1;
   }
 
   
@@ -234,6 +250,7 @@ public:
     gl::enableDepthRead();
     gl::enableDepthWrite();
     gl::enable(GL_CULL_FACE);
+    gl::disableAlphaBlending();
 
     gl::setMatrices(field_camera);
     
@@ -263,9 +280,62 @@ public:
     gl::disableDepthRead();
     gl::disableDepthWrite();
     gl::disable(GL_CULL_FACE);
+    gl::enableAlphaBlending();
 
     gl::setMatrices(ui_camera);
 
+    switch (playing_mode) {
+    case TITLE:
+      {
+        {
+          font->size(100);
+          std::string text("Apprentice Monarch");
+          auto size = font->drawSize(text);
+          font->draw(text, Vec2f(-size.x / 2, 150), ColorA(1, 1, 1, 1));
+        }
+        {
+          font->size(60);
+          std::string text("Left click to start");
+          auto size = font->drawSize(text);
+
+          float r = frame_counter * 0.05f;
+          font->draw(text, Vec2f(-size.x / 2, -200), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
+        }
+      }
+      break;
+
+    case GAMEMAIN:
+      {
+        // 残り時間
+        font->size(80);
+
+        char text[100];
+        sprintf(text, "%02d", game->getRemainingTime() / 60);
+        
+        auto size = font->drawSize(text);
+        font->draw(text, Vec2f(-size.x / 2, 280), ColorA(1, 1, 1, 1));
+      }
+      break;
+
+    case RESULT:
+      {
+        {
+          font->size(80);
+          std::string text("Result");
+          auto size = font->drawSize(text);
+          font->draw(text, Vec2f(-size.x / 2, 250), ColorA(1, 1, 1, 1));
+        }
+        {
+          font->size(40);
+          std::string text("Left click to title");
+          auto size = font->drawSize(text);
+
+          float r = frame_counter * 0.05f;
+          font->draw(text, Vec2f(-size.x / 2, -300), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
+        }
+      }
+      break;
+    }
   }
 
 };
