@@ -123,6 +123,43 @@ View createView() {
   return view;
 }
 
+
+#ifdef DEBUG
+
+// パネルのエッジを表示
+void drawPanelEdge(const Panel& panel, glm::vec3 pos, u_int rotation) {
+  const float r_tbl[] = {
+    0.0f,
+    -180.0f * 0.5f,
+    -180.0f,
+    -180.0f * 1.5f 
+  };
+
+  ci::gl::pushModelView();
+  ci::gl::translate(pos.x, pos.y, pos.z);
+  ci::gl::rotate(ci::Vec3f(0.0f, r_tbl[rotation], 0.0f));
+
+  ci::gl::lineWidth(10);
+
+  const auto& edge = panel.getEdge();
+  for (auto e : edge) {
+    ci::Color col;
+    if (e & Panel::PATH)   col = ci::Color(1.0, 1.0, 0.0);
+    if (e & Panel::FOREST) col = ci::Color(0.0, 0.5, 0.0);
+    if (e & Panel::GRASS)  col = ci::Color(0.0, 1.0, 0.0);
+    ci::gl::color(col);
+
+    ci::gl::drawLine(ci::Vec3f(-10.1, 1, 10.1), ci::Vec3f(10.1, 1, 10.1));
+    ci::gl::rotate(ci::Vec3f(0.0f, 90.0f, 0.0f));
+  }
+
+  ci::gl::popModelView();
+
+  ci::gl::color(ci::Color(1, 1, 1));
+}
+
+#endif
+
 // パネルを１枚表示
 void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view) {
   const float r_tbl[] = {

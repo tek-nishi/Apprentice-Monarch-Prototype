@@ -333,8 +333,8 @@ public:
     gl::enable(GL_CULL_FACE);
 
     // フィールド
-    const auto& panels = game->getFieldPanels();
-    ngs::drawFieldPanels(panels, view);
+    const auto& field_panels = game->getFieldPanels();
+    ngs::drawFieldPanels(field_panels, view);
 
     if (game->isPlaying()) {
       // 置ける場所
@@ -348,6 +348,10 @@ public:
       // 手持ちパネル
       glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
+#ifdef DEBUG
+      ngs::drawPanelEdge(panels[game->getHandPanel()], pos, game->getHandRotation());
+#endif
+
     }
     drawFieldBg(view);
 
