@@ -377,7 +377,7 @@ private:
       u8"深い森:   %d",
       u8"街の数:   %d",
       u8"教会の数: %d",
-      u8"城の数:   %d",
+      // u8"城の数:   %d",
     };
 
     u_int i = 0;
@@ -395,19 +395,39 @@ private:
   void drawResult() {
     drawGameInfo(30, Vec2f(-300, 150), -50);
 
+    int score   = game->getTotalScore();
+    int ranking = game->getTotalRanking();
+
+    const char* ranking_text[] = {
+      "Emperor",
+      "King",
+      "Viceroy",
+      "Grand Duke",
+      "Prince",
+      "Landgrave",
+      "Duke",
+      "Marquess",
+      "Margrave",
+      "Count",  
+      "Viscount",
+      "Baron", 
+      "Baronet",
+    };
+
     {
       char text[100];
-      sprintf(text, "Your Score: %d", 9999);
+      sprintf(text, "Your Score: %d", score);
       font->size(60);
       font->draw(text, Vec2f(0, 0), ColorA(1, 1, 1, 1));
     }
     {
       char text[100];
-      sprintf(text, "Your Rank: %s", "xxxx");
+      sprintf(text, "Your Rank: %s", ranking_text[ranking]);
       font->size(60);
       font->draw(text, Vec2f(0, -100), ColorA(1, 1, 1, 1));
     }
   }
+
 
 };
 

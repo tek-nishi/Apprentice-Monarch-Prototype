@@ -64,6 +64,7 @@ struct Game {
   // 本編終了
   void endPlay() {
     finished = true;
+    calcTotalScore();
     DOUT << "Game ended." << std::endl;
   }
 
@@ -219,6 +220,15 @@ struct Game {
     return scores;
   }
 
+  // 最終スコア
+  int getTotalScore() const {
+    return total_score;
+  }
+
+  int getTotalRanking() const {
+    return total_ranking;
+  }
+
 
   // プレイ結果
   void calcResult() {
@@ -260,6 +270,8 @@ private:
   std::vector<glm::ivec2> completed_church;
   // スコア
   std::vector<int> scores;
+  int total_score = 0;
+  int total_ranking = 0;
 
   // 列挙したフィールド上のパネル
   std::vector<PanelStatus> field_panels;
@@ -294,6 +306,44 @@ private:
     scores[4] = std::count(std::begin(deep_forest), std::end(deep_forest), 1);
     scores[5] = countTown(completed_path, field, panels);
     scores[6] = completed_church.size();
+  }
+
+  // 最終スコア
+  void calcTotalScore() {
+    // FIXME 適当に加算しているだけ…
+    total_score = scores[0] * 3            // 完成した道の数
+                  + scores[1] * 4          // 道の長さ
+                  + scores[2] * 5          // 完成した森の数
+                  + scores[3] * 8          // 森の面積
+                  + scores[4] * 15         // 深い森の数
+                  + scores[5] * 4          // 街の数
+                  + scores[6] * 20;        // 教会の数
+
+    total_score *= 50;
+
+    calcRanking(total_score);
+  }
+
+  // ランキングを決める
+  void calcRanking(int score) {
+    const int ranking_score[] = {
+      12 * 12 * 700,
+      11 * 11 * 700,
+      10 * 10 * 700,
+      9 * 9 * 700,
+      8 * 8 * 700,
+      7 * 7 * 700,
+      6 * 6 * 700,
+      5 * 5 * 700,
+      4 * 4 * 700,
+      3 * 3 * 700,
+      2 * 2 * 700,
+      1 * 1 * 700,
+      0 * 0 * 700,
+    };
+    for (total_ranking = 0; total_ranking < 12; ++total_ranking) {
+      if (ranking_score[total_ranking] <= score) break;
+    }
   }
 };
 
