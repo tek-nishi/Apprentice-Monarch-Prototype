@@ -14,6 +14,9 @@
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
 		12C40E3D1587473B8798AD05 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8219B942622D4297856A3223 /* CinderApp.icns */; };
 		47EFDCE71FFDBC1D0079CA36 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 47EFDCE61FFDBC1D0079CA36 /* assets */; };
+		47EFDCE91FFE17EE0079CA36 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47EFDCE81FFE17EE0079CA36 /* font.cpp */; };
+		47EFDCEB1FFE19620079CA36 /* glTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47EFDCEA1FFE19620079CA36 /* glTexture.cpp */; };
+		47EFDCED1FFE1F7B0079CA36 /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47EFDCEC1FFE1F7B0079CA36 /* Path.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		63556E53F64E4EAC93EE7BD8 /* TestProjectApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5853823A94D098D30DC67 /* TestProjectApp.cpp */; };
@@ -31,6 +34,9 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		47EFDCE61FFDBC1D0079CA36 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../assets; sourceTree = "<group>"; };
+		47EFDCE81FFE17EE0079CA36 /* font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = font.cpp; path = ../src/font.cpp; sourceTree = "<group>"; };
+		47EFDCEA1FFE19620079CA36 /* glTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glTexture.cpp; path = ../src/glTexture.cpp; sourceTree = "<group>"; };
+		47EFDCEC1FFE1F7B0079CA36 /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Path.cpp; path = ../src/Path.cpp; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		7CB5853823A94D098D30DC67 /* TestProjectApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = TestProjectApp.cpp; path = ../src/TestProjectApp.cpp; sourceTree = "<group>"; };
@@ -63,6 +69,9 @@
 			isa = PBXGroup;
 			children = (
 				7CB5853823A94D098D30DC67 /* TestProjectApp.cpp */,
+				47EFDCE81FFE17EE0079CA36 /* font.cpp */,
+				47EFDCEA1FFE19620079CA36 /* glTexture.cpp */,
+				47EFDCEC1FFE1F7B0079CA36 /* Path.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -203,6 +212,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47EFDCE91FFE17EE0079CA36 /* font.cpp in Sources */,
+				47EFDCEB1FFE19620079CA36 /* glTexture.cpp in Sources */,
+				47EFDCED1FFE1F7B0079CA36 /* Path.cpp in Sources */,
 				63556E53F64E4EAC93EE7BD8 /* TestProjectApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

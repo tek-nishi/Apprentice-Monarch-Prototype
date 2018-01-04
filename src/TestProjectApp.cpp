@@ -11,6 +11,7 @@
 #include <set>
 #include "game.hpp"
 #include "view.hpp"
+#include "font.hpp"
 
 
 using namespace ci;
@@ -19,6 +20,7 @@ using namespace ci::app;
 
 class TestProjectApp : public AppNative {
   CameraPersp field_camera;
+  CameraOrtho ui_camera;
 
   Arcball arcball;
 
@@ -42,15 +44,13 @@ class TestProjectApp : public AppNative {
   int playing_mode = TITLE;
 
 
-  // 表示
+  // 表示関連
   ngs::View view;
+  std::shared_ptr<ngs::Font> font;
 
-  bool on_field = false;
   Vec3f cursor_pos; 
   glm::ivec2 field_pos;
-
   bool can_put = false;
-
 
 
 public:
@@ -67,6 +67,15 @@ public:
     field_camera.setEyePoint(Vec3f(0.0f, 100.0f, -150.0f));
     field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
 
+    // UIカメラ
+    auto half_size = getWindowSize() / 2;
+    ui_camera = CameraOrtho(-half_size.x, half_size.x,
+                            half_size.y, -half_size.y,
+                            -1, 1);
+    ui_camera.setEyePoint(Vec3f(0, 0, 0));
+    ui_camera.setCenterOfInterestPoint(Vec3f(0, 0, -1));
+
+
     // Arcball初期化
     arcball = Arcball(getWindowSize());
 
@@ -77,10 +86,7 @@ public:
 
     // 表示
     view = ngs::createView();
-
-    gl::enableDepthRead();
-    gl::enableDepthWrite();
-    gl::enable(GL_CULL_FACE);
+    font = std::make_shared<ngs::Font>("MAIAN.TTF");
   }
 
 
@@ -104,8 +110,8 @@ public:
 
     // 地面との交差を調べ、正確な位置を計算
     float z;
-    on_field = ray.calcPlaneIntersection(Vec3f(0, 10, 0), Vec3f(0, 1, 0), &z);
-    can_put  = false;
+    float on_field = ray.calcPlaneIntersection(Vec3f(0, 10, 0), Vec3f(0, 1, 0), &z);
+    can_put = false;
     if (on_field) {
       cursor_pos = ray.calcPosition(z);
 
@@ -224,6 +230,11 @@ public:
 	void draw() override {
     gl::clear(Color(0, 0, 0));
 
+    // 本編
+    gl::enableDepthRead();
+    gl::enableDepthWrite();
+    gl::enable(GL_CULL_FACE);
+
     gl::setMatrices(field_camera);
     
     Quatf rotate = arcball.getQuat();
@@ -247,6 +258,14 @@ public:
       glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
     }
+
+    // UI
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    gl::disable(GL_CULL_FACE);
+
+    gl::setMatrices(ui_camera);
+
   }
 
 };
