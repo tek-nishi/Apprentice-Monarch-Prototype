@@ -56,7 +56,11 @@ struct Game {
 
   // 内部時間を進める
   void update() {
-    if (isPlaying() && !--play_time) {
+    if (isPlaying()
+#ifdef DEBUG
+        && time_count
+#endif
+        && !--play_time) {
       // 時間切れ
       DOUT << "Time Up." << std::endl;
       endPlay();
@@ -256,6 +260,12 @@ struct Game {
          << std::endl;
   }
 
+#ifdef DEBUG
+  void pauseTimeCount() {
+    time_count = !time_count;
+    DOUT << "time " << (time_count ? "counted." : "paused.") << std::endl;
+  }
+#endif
 
 
 private:
@@ -265,6 +275,9 @@ private:
   bool started    = false;
   bool finished   = false;
   u_int play_time = 0;
+#ifdef DEBUG
+  bool time_count = true;
+#endif
 
   std::vector<int> waiting_panels;
   int hand_panel;

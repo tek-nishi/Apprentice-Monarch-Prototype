@@ -254,7 +254,7 @@ public:
     }
     if (code == KeyEvent::KEY_t) {
       // 時間停止
-
+      game->pauseTimeCount();
     }
     if (code == KeyEvent::KEY_e) {
       // 強制終了
