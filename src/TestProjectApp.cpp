@@ -53,11 +53,8 @@ class TestProjectApp : public AppNative {
   glm::ivec2 field_pos;
   bool can_put = false;
 
-
+  // 残り時間表示位置(xのみ)
   int remain_time_x;
-
-
-
 
   u_int frame_counter = 0;
 
@@ -67,10 +64,17 @@ class TestProjectApp : public AppNative {
 public:
   void prepareSettings(Settings* settings) override {
     settings->setWindowSize(1024, 720);
+    settings->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
+    // settings->enableHighDensityDisplay(true);
   }
 
 	void setup() override {
-    field_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
+#if defined(CINDER_MAC)
+    // FIXME OSXでタイトルバーにアプリ名を表示するworkaround
+    getWindow()->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
+#endif
+    
+     field_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
                                35.0f,
                                1.0f, 1000.0f);
 
@@ -332,7 +336,7 @@ public:
         
         font->draw(text, Vec2f(remain_time_x, 280), ColorA(1, 1, 1, 1));
       }
-      drawGameInfo();
+      drawGameInfo(25, Vec2f(-500, 0), -40);
       break;
 
     case RESULT:
@@ -344,14 +348,6 @@ public:
           font->draw(text, Vec2f(-size.x / 2, 250), ColorA(1, 1, 1, 1));
         }
         {
-          font->size(50);
-          
-
-
-
-
-        }
-        {
           font->size(40);
           std::string text("Left click to title");
           auto size = font->drawSize(text);
@@ -359,6 +355,7 @@ public:
           float r = frame_counter * 0.05f;
           font->draw(text, Vec2f(-size.x / 2, -300), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
         }
+        drawResult();
       }
       break;
     }
@@ -367,8 +364,8 @@ public:
 
 private:
   // プレイ情報を表示
-  void drawGameInfo() {
-    jpn_font->size(25);
+  void drawGameInfo(int font_size, Vec2f pos, float next_y) {
+    jpn_font->size(font_size);
 
     const auto& scores = game->getScores();
 
@@ -380,24 +377,37 @@ private:
       u8"深い森:   %d",
       u8"街の数:   %d",
       u8"教会の数: %d",
-      // u8"城の数:   %d",
+      u8"城の数:   %d",
     };
 
-    int y = 0;
     u_int i = 0;
     for (const auto* t : text) {
       char buffer[100];
       sprintf(buffer, t, scores[i]);
-      jpn_font->draw(buffer, Vec2f(-500, y), ColorA(1, 1, 1, 1));
+      jpn_font->draw(buffer, pos, ColorA(1, 1, 1, 1));
 
-      y -= 40;
+      pos.y += next_y;
       i += 1;
     }
   }
 
+  // 結果を表示
+  void drawResult() {
+    drawGameInfo(30, Vec2f(-300, 150), -50);
 
-
-
+    {
+      char text[100];
+      sprintf(text, "Your Score: %d", 9999);
+      font->size(60);
+      font->draw(text, Vec2f(0, 0), ColorA(1, 1, 1, 1));
+    }
+    {
+      char text[100];
+      sprintf(text, "Your Rank: %s", "xxxx");
+      font->size(60);
+      font->draw(text, Vec2f(0, -100), ColorA(1, 1, 1, 1));
+    }
+  }
 
 };
 

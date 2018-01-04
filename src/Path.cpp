@@ -17,16 +17,13 @@ ci::fs::path getAssetPath(const std::string& path) {
 }
 
 ci::fs::path getDocumentPath() {
-#if defined(CINDER_COCOA_TOUCH)
-  // iOS版はアプリごとに用意された場所
-  return ci::getDocumentsDirectory();
-#elif defined (CINDER_MAC)
+#if defined (CINDER_MAC)
 #if defined (DEBUG)
   // Debug時はプロジェクトの場所へ書き出す
   return ci::fs::path(PREPRO_TO_STR(SRCROOT));
 #else
   // Release時はアプリコンテンツ内
-  return ci::app::Platform::get()->getResourceDirectory();
+  return ci::app::getAppPath() / "Contents/Resources";
 #endif
 #else
   // Widnowsは実行ファイルと同じ場所
