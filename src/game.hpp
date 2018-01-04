@@ -261,9 +261,21 @@ struct Game {
   }
 
 #ifdef DEBUG
+  // 時間の進みON/OFF
   void pauseTimeCount() {
     time_count = !time_count;
     DOUT << "time " << (time_count ? "counted." : "paused.") << std::endl;
+  }
+
+  // 手持ちのパネルを変更
+  void changePanelForced(int next) {
+    hand_panel += next;
+    if (hand_panel < 0) {
+      hand_panel = panels.size() - 1;
+    }
+    else if (hand_panel >= panels.size()) {
+      hand_panel = 0;
+    }
   }
 #endif
 

@@ -260,6 +260,15 @@ public:
       // 強制終了
       game->endPlay();
     }
+
+    // 手持ちパネル強制変更
+    if (code == KeyEvent::KEY_b) {
+      game->changePanelForced(-1);
+    }
+    else if (code == KeyEvent::KEY_n) {
+      game->changePanelForced(1);
+    }
+
 #endif
   }
 
