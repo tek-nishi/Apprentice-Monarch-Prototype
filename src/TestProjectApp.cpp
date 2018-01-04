@@ -47,6 +47,7 @@ class TestProjectApp : public AppNative {
   // 表示関連
   ngs::View view;
   std::shared_ptr<ngs::Font> font;
+  std::shared_ptr<ngs::Font> jpn_font;
 
   Vec3f cursor_pos; 
   glm::ivec2 field_pos;
@@ -101,9 +102,12 @@ public:
 
     {
       // 残り時間表示のx位置はあらかじめ決めておく
+      font->size(80);
       auto size = font->drawSize("9'99");
       remain_time_x = -size.x / 2;
     }
+
+    jpn_font = std::make_shared<ngs::Font>("DFHSM5001.ttf");
   }
 
 
@@ -328,6 +332,7 @@ public:
         
         font->draw(text, Vec2f(remain_time_x, 280), ColorA(1, 1, 1, 1));
       }
+      drawGameInfo();
       break;
 
     case RESULT:
@@ -337,6 +342,14 @@ public:
           std::string text("Result");
           auto size = font->drawSize(text);
           font->draw(text, Vec2f(-size.x / 2, 250), ColorA(1, 1, 1, 1));
+        }
+        {
+          font->size(50);
+          
+
+
+
+
         }
         {
           font->size(40);
@@ -350,6 +363,41 @@ public:
       break;
     }
   }
+
+
+private:
+  // プレイ情報を表示
+  void drawGameInfo() {
+    jpn_font->size(25);
+
+    const auto& scores = game->getScores();
+
+    const char* text[] = {
+      u8"道の数:   %d",
+      u8"道の長さ: %d",
+      u8"森の数:   %d",
+      u8"森の広さ: %d",
+      u8"深い森:   %d",
+      u8"街の数:   %d",
+      u8"教会の数: %d",
+      // u8"城の数:   %d",
+    };
+
+    int y = 0;
+    u_int i = 0;
+    for (const auto* t : text) {
+      char buffer[100];
+      sprintf(buffer, t, scores[i]);
+      jpn_font->draw(buffer, Vec2f(-500, y), ColorA(1, 1, 1, 1));
+
+      y -= 40;
+      i += 1;
+    }
+  }
+
+
+
+
 
 };
 

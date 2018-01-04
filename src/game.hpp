@@ -17,7 +17,8 @@ struct Game {
 
 
   Game(const std::vector<Panel>& panels_)
-    : panels(panels_)
+    : panels(panels_),
+      scores(8, 0)
   {
     // パネルを通し番号で用意
     for (int i = 0; i < 64; ++i) {
@@ -109,6 +110,7 @@ struct Game {
 
     field.addPanel(hand_panel, field_pos, hand_rotation);
 
+    bool update_score = false;
     {
       // 森完成チェック
       auto completed = isCompleteAttribute(Panel::FOREST, field_pos, field, panels);
@@ -131,6 +133,7 @@ struct Game {
 
         // TIPS コンテナ同士の連結
         std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_forests));
+        update_score = true;
       }
     }
     {
@@ -146,6 +149,7 @@ struct Game {
 
         // TIPS コンテナ同士の連結
         std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_path));
+        update_score = true;
       }
     }
     {
@@ -157,8 +161,14 @@ struct Game {
               
         // TIPS コンテナ同士の連結
         std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_church));
+        update_score = true;
       }
     }
+
+    if (update_score) {
+      updateScores();
+    }
+
 
     fieldUpdate();
 
@@ -204,6 +214,12 @@ struct Game {
   };
 
 
+  // プレイ中のスコア
+  const std::vector<int>& getScores() const {
+    return scores;
+  }
+
+
   // プレイ結果
   void calcResult() {
     DOUT << "Forest: " << completed_forests.size() << '\n'
@@ -242,6 +258,8 @@ private:
   std::vector<std::vector<glm::ivec2>> completed_path;
   // 完成した教会
   std::vector<glm::ivec2> completed_church;
+  // スコア
+  std::vector<int> scores;
 
   // 列挙したフィールド上のパネル
   std::vector<PanelStatus> field_panels;
@@ -265,6 +283,17 @@ private:
   void fieldUpdate() {
     field_panels = field.enumeratePanels();
     blank        = field.searchBlank();
+  }
+
+  // スコア更新
+  void updateScores() {
+    scores[0] = completed_path.size();
+    scores[1] = countTotalAttribute(completed_path, field, panels);
+    scores[2] = completed_forests.size();
+    scores[3] = countTotalAttribute(completed_forests, field, panels);
+    scores[4] = std::count(std::begin(deep_forest), std::end(deep_forest), 1);
+    scores[5] = countTown(completed_path, field, panels);
+    scores[6] = completed_church.size();
   }
 };
 
