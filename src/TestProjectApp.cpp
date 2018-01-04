@@ -8,6 +8,7 @@
 #include <cinder/gl/Texture.h>
 #include <cinder/Camera.h>
 #include <cinder/Arcball.h>
+#include <cinder/Rand.h>
 #include <glm/glm.hpp>
 #include <set>
 #include "game.hpp"
@@ -80,6 +81,9 @@ public:
     // FIXME OSXでタイトルバーにアプリ名を表示するworkaround
     getWindow()->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
 #endif
+
+    // 乱数初期化
+    Rand::randomize();	
 
 #if 0
     // 遠景用カメラ

@@ -5,37 +5,50 @@
 //
 
 #include <random>
+#include <cinder/Rand.h>
 #include "logic.hpp"
 
 
 namespace ngs {
 
 struct Game {
-  enum {
-    START_PANEL = 34
-  };
-
-
   Game(const std::vector<Panel>& panels_)
     : panels(panels_),
       scores(8, 0)
   {
     // パネルを通し番号で用意
-    for (int i = 0; i < 64; ++i) {
+    for (int i = 0; i < panels.size(); ++i) {
       waiting_panels.push_back(i);
+    }
+
+    // お城のパネルを探す
+    std::vector<int> start_panels;
+    for (int i = 0; i < panels.size(); ++i) {
+      if (panels[i].getAttribute() & Panel::CASTLE) {
+        start_panels.push_back(i);
+      }
+    }
+    assert(!start_panels.empty());
+
+    // 乱数を用意
+    std::random_device seed_gen;
+    std::mt19937 engine(seed_gen());
+
+    if (start_panels.size() > 1) {
+      // お城が何枚かある時はシャッフル
+      std::shuffle(std::begin(start_panels), std::end(start_panels), engine);
     }
 
     {
       // 最初に置くパネルを取り除いてからシャッフル
-      auto it = std::find(std::begin(waiting_panels), std::end(waiting_panels), START_PANEL);
+      auto it = std::find(std::begin(waiting_panels), std::end(waiting_panels), start_panels[0]);
       if (it != std::end(waiting_panels)) waiting_panels.erase(it);
 
-      std::mt19937 engine;
       std::shuffle(std::begin(waiting_panels), std::end(waiting_panels), engine);
     }
     
     // 最初のパネルを設置
-    field.addPanel(START_PANEL, {0, 0}, 0);
+    field.addPanel(start_panels[0], { 0, 0 }, ci::randInt(4));
     field_panels = field.enumeratePanels();
   }
 

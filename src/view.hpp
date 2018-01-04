@@ -56,6 +56,19 @@ View createView() {
     "pa09.ply",
     "pa10.ply",
     "pa11.ply",
+
+    "pa00.ply",
+    "pa01.ply",
+    "pa02.ply",
+    "pa03.ply",
+    "pa04.ply",
+    "pa05.ply",
+    "pa06.ply",
+    "pa07.ply",
+    "pa08.ply",
+    "pa09.ply",
+    "pa10.ply",
+    "pa11.ply",
     
     "pd00.ply",
     "pd01.ply",
@@ -91,6 +104,10 @@ View createView() {
     "pf05.ply",
     "pf06.ply",
     "pf07.ply",
+    "pf08.ply",
+    "pf09.ply",
+    "pf10.ply",
+    "pf11.ply",
     
     "pf00.ply",
     "pf01.ply",
@@ -100,6 +117,10 @@ View createView() {
     "pf05.ply",
     "pf06.ply",
     "pf07.ply",
+    "pf08.ply",
+    "pf09.ply",
+    "pf10.ply",
+    "pf11.ply",
   };
 
   View view;
