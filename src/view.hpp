@@ -172,9 +172,9 @@ void drawFieldBg(const View& view) {
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 
   // GL_LINEARで使用する近景位置
-	glFogf(GL_FOG_START, 100.0f);
+	glFogf(GL_FOG_START, 50.0f);
   // GL_LINEARで使用する遠景位置
-	glFogf(GL_FOG_END, 400.0f);
+	glFogf(GL_FOG_END, 900.0f);
 
   // 色指定
   GLfloat fog_color[] = { 0.0f, 0.0f, 0.0f, 1.0f };

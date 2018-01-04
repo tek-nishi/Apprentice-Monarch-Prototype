@@ -166,6 +166,7 @@ public:
     }
   }
 
+  // 操作関連
   void mouseMove(MouseEvent event) override {
     // フィールド上での座標を計算
     Vec2i pos = event.getPos();
@@ -225,6 +226,13 @@ public:
       }
       break;
     }
+  }
+
+  void mouseWheel(MouseEvent event) override {
+    distance -= event.getWheelIncrement() * 5.0f;
+
+    field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -distance));
+    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
   }
 
 
