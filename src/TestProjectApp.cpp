@@ -53,6 +53,11 @@ class TestProjectApp : public AppNative {
   bool can_put = false;
 
 
+  int remain_time_x;
+
+
+
+
   u_int frame_counter = 0;
 
 
@@ -92,7 +97,13 @@ public:
     // 表示
     view = ngs::createView();
     font = std::make_shared<ngs::Font>("MAIAN.TTF");
-    font->size(60);
+    font->size(80);
+
+    {
+      // 残り時間表示のx位置はあらかじめ決めておく
+      auto size = font->drawSize("9'99");
+      remain_time_x = -size.x / 2;
+    }
   }
 
 
@@ -310,10 +321,12 @@ public:
         font->size(80);
 
         char text[100];
-        sprintf(text, "%02d", game->getRemainingTime() / 60);
+        u_int remainig_time = (game->getRemainingTime() + 59) / 60;
+        u_int minutes = remainig_time / 60;
+        u_int seconds = remainig_time % 60;
+        sprintf(text, "%d'%02d", minutes, seconds);
         
-        auto size = font->drawSize(text);
-        font->draw(text, Vec2f(-size.x / 2, 280), ColorA(1, 1, 1, 1));
+        font->draw(text, Vec2f(remain_time_x, 280), ColorA(1, 1, 1, 1));
       }
       break;
 
