@@ -9,6 +9,8 @@
 #include <set>
 
 
+namespace ngs {
+
 // Fieldにパネルが置けるか判定
 bool canPutPanel(const Panel& panel, glm::ivec2 pos, u_int rotation,
                  const Field& field, const std::vector<Panel>& panels) {
@@ -289,3 +291,4 @@ bool canPanelPutField(const Panel& panel, const std::vector<glm::ivec2>& blank,
   return false;
 }
 
+}

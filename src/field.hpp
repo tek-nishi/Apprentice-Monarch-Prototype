@@ -10,6 +10,8 @@
 #include "utility.hpp"
 
 
+namespace ngs {
+
 // Fieldに置かれたパネルの状態
 struct PanelStatus {
   glm::ivec2 position;
@@ -85,3 +87,5 @@ private:
   std::map<glm::ivec2, PanelStatus, LessVec<glm::ivec2>> panel_status_;
 
 };
+
+}

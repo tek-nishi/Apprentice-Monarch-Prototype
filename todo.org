@@ -1,6 +1,5 @@
 
 * TODO 試遊会向けのパネル製作
-* TODO タイトル決め
 * TODO Cinderへの移植
 * TODO 文字表示はstbで
 * TODO マウス対応
@@ -9,6 +8,8 @@
 * TODO 効果音
 * TODO 条件を満たすと特殊な地形が出現
 * TODO 得点を総合して評価する
+* DONE タイトル決め
+CLOSED: [2018-01-04 木 09:27]
 * DONE 深い森
 CLOSED: [2018-01-04 木 01:00]
 * DONE 教会
