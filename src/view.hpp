@@ -108,19 +108,6 @@ View createView() {
     "pf09.ply",
     "pf10.ply",
     "pf11.ply",
-    
-    "pf00.ply",
-    "pf01.ply",
-    "pf02.ply",
-    "pf03.ply",
-    "pf04.ply",
-    "pf05.ply",
-    "pf06.ply",
-    "pf07.ply",
-    "pf08.ply",
-    "pf09.ply",
-    "pf10.ply",
-    "pf11.ply",
   };
 
   View view;
@@ -202,8 +189,8 @@ void drawFieldBg(const View& view) {
   glFogfv(GL_FOG_COLOR, fog_color);
 
   ci::gl::pushModelView();
-  ci::gl::translate(10, -10.0, 10);
-  ci::gl::scale(20.0, 2.0, 20.0);
+  ci::gl::translate(10, -15.0, 10);
+  ci::gl::scale(20.0, 10.0, 20.0);
   ci::gl::draw(view.bg_model);
   ci::gl::popModelView();
   

@@ -16,6 +16,8 @@ struct Game {
     : panels(panels_),
       scores(8, 0)
   {
+    DOUT << "Panel: " << panels.size() << std::endl;
+
     // パネルを通し番号で用意
     for (int i = 0; i < panels.size(); ++i) {
       waiting_panels.push_back(i);
@@ -300,6 +302,8 @@ private:
     check_all_blank = true;
 
     waiting_panels.erase(std::begin(waiting_panels));
+
+    DOUT << "Next panel: " << hand_panel << std::endl;
 
     return true;
   }

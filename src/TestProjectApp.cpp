@@ -22,7 +22,7 @@ using namespace ci::app;
 
 class TestProjectApp : public AppNative {
   float fov = 25.0f;
-  float distance = 150.0f;
+  float distance = 160.0f;
 
   CameraPersp bg_camera;
   CameraPersp field_camera;
@@ -113,6 +113,8 @@ public:
 
     // Arcball初期化
     arcball = Arcball(getWindowSize());
+    Quatf q(toRadians(-30.0f), toRadians(45.0f), 0.0f);
+    arcball.setQuat(q);
 
     // パネル生成
     panels = ngs::createPanels();
