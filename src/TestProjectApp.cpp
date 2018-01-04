@@ -53,8 +53,8 @@ public:
                                1.0f, 1000.0f);
 
     // TIPS EyePoint→CenterOfInterestPointの順序で初期化する
-    field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -200.0f));
-    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 0.0f, 0.0f));
+    field_camera.setEyePoint(Vec3f(0.0f, 100.0f, -150.0f));
+    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
 
     // Arcball初期化
     arcball = Arcball(getWindowSize());
