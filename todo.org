@@ -1,13 +1,16 @@
 
 * TODO 試遊会向けのパネル製作
-* TODO Cinderへの移植
+* TODO タイトル→本編→結果の流れ
+* TODO 背景
 * TODO 文字表示はstbで
-* TODO マウス対応
 * TODO マウスホイール対応
-* TODO マルチタッチ対応
 * TODO 効果音
 * TODO 条件を満たすと特殊な地形が出現
 * TODO 得点を総合して評価する
+* DONE マウス対応
+CLOSED: [2018-01-04 木 15:23]
+* DONE Cinderへの移植
+CLOSED: [2018-01-04 木 15:23]
 * DONE タイトル決め
 CLOSED: [2018-01-04 木 09:27]
 * DONE 深い森
@@ -38,6 +41,8 @@ CLOSED: [2018-01-03 水 19:31]
 CLOSED: [2018-01-03 水 20:15]
 * DONE 街の多さ
 CLOSED: [2018-01-03 水 21:39]
+* ABORT マルチタッチ対応
+CLOSED: [2018-01-04 木 15:24]
 * ABORT iOS移植
 CLOSED: [2018-01-04 木 08:34]
 * ABORT 平原の広さ

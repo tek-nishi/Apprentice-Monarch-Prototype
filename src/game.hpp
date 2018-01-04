@@ -16,8 +16,8 @@ struct Game {
   };
 
 
-  Game()
-    : panels(createPanels())
+  Game(const std::vector<Panel>& panels_)
+    : panels(panels_)
   {
     // パネルを通し番号で用意
     for (int i = 0; i < 64; ++i) {
@@ -35,9 +35,58 @@ struct Game {
     
     // 最初のパネルを設置
     field.addPanel(START_PANEL, {0, 0}, 0);
-    getNextPanel();
+    field_panels = field.enumeratePanels();
+  }
 
+  // 内部時間を進める
+  void update() {
+    if (isPlaying() && !--play_time) {
+      // 時間切れ
+      DOUT << "Time Up." << std::endl;
+      endPlay();
+    }
+  }
+
+
+  // 本編開始
+  void beginPlay() {
+    started = true;
+    // とりあえず３分
+    play_time = 60 * 60 * 3;
+
+    getNextPanel();
     fieldUpdate();
+
+    DOUT << "Game started." << std::endl;
+  }
+
+  // 本編終了
+  void endPlay() {
+    finished = true;
+    DOUT << "Game ended." << std::endl;
+  }
+
+  
+  // 残り時間
+  u_int getRemainingTime() const {
+    return play_time;
+  }
+
+
+  // プレイ中？
+  // 始まったらtrueになり、終了しても変化しない
+  bool isBeganPlay() const {
+    return started;
+  }
+
+  // 始まって、結果発表直前まで
+  bool isPlaying() const {
+    return started && !finished;
+  }
+
+  // 結果発表以降
+  bool isEndedPlay() const {
+    return finished;
   }
 
 
@@ -55,6 +104,9 @@ struct Game {
 
   // 操作
   void putHandPanel(glm::ivec2 field_pos) {
+    // プレイ中でなければ置けない
+    if (!isPlaying()) return;
+
     field.addPanel(hand_panel, field_pos, hand_rotation);
 
     {
@@ -110,13 +162,22 @@ struct Game {
 
     fieldUpdate();
 
-    // 全パネルを使い切った
-    if (waiting_panels.empty()) {
-      DOUT << "Put all cards." << std::endl;
+    // 新しいパネル
+    if (!getNextPanel()) {
+      // 全パネルを使い切った
+      DOUT << "End of panels." << std::endl;
+      endPlay();
+      return;
     }
 
-    // 新しいパネル
-    getNextPanel();
+    // パネルをどこかに置けるか調べる
+    if (!canPanelPutField(panels[hand_panel], blank,
+                          field, panels)) {
+      // 置けない…
+      DOUT << "Can't put panel." << std::endl;
+      endPlay();
+      return;
+    }
   }
 
   void rotationHandPanel() {
@@ -143,8 +204,26 @@ struct Game {
   };
 
 
+  // プレイ結果
+  void calcResult() {
+    DOUT << "Forest: " << completed_forests.size() << '\n'
+         << "  area: " << countTotalAttribute(completed_forests, field, panels) << '\n'
+         << "  deep: " << std::count(std::begin(deep_forest), std::end(deep_forest), 1) << '\n'
+         << "  Path: " << completed_path.size() << '\n'
+         << "length: " << countTotalAttribute(completed_path, field, panels) << '\n'
+         << "  Town: " << countTown(completed_path, field, panels)
+         << std::endl;
+  }
+
+
+
 private:
-  std::vector<Panel> panels;
+  // FIXME 参照で持つのいくない
+  const std::vector<Panel>& panels;
+
+  bool started    = false;
+  bool finished   = false;
+  u_int play_time = 0;
 
   std::vector<int> waiting_panels;
   int hand_panel;

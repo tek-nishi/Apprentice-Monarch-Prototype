@@ -27,8 +27,19 @@ class TestProjectApp : public AppNative {
   // TIPS:キー入力の判定に集合を利用
   std::set<int> pressing_key;
 
+  // パネル
+  // FIXME インスタンスに時間がかかるのでGameから外に出した
+  std::vector<ngs::Panel> panels;
+
   // ゲーム本編
   std::shared_ptr<ngs::Game> game;
+
+  enum {
+    TITLE,
+    GAMEMAIN,
+    RESULT,
+  };
+  int playing_mode = TITLE;
 
 
   // 表示
@@ -59,12 +70,13 @@ public:
     // Arcball初期化
     arcball = Arcball(getWindowSize());
 
-    // 本編
-    game = std::make_shared<ngs::Game>();
+    // パネル生成
+    panels = ngs::createPanels();
+    // 本編生成
+    game = std::make_shared<ngs::Game>(panels);
 
     // 表示
     view = ngs::createView();
-
 
     gl::enableDepthRead();
     gl::enableDepthWrite();
@@ -92,7 +104,7 @@ public:
 
     // 地面との交差を調べ、正確な位置を計算
     float z;
-    on_field = ray.calcPlaneIntersection(Vec3f(0, 1, 0), Vec3f(0, 1, 0), &z);
+    on_field = ray.calcPlaneIntersection(Vec3f(0, 10, 0), Vec3f(0, 1, 0), &z);
     can_put  = false;
     if (on_field) {
       cursor_pos = ray.calcPosition(z);
@@ -129,17 +141,39 @@ public:
   }
   
   void mouseUp(MouseEvent event) override {
-    if (event.isLeft() && !mouse_draged) {
-      // パネルを配置
-      if (can_put) {
-        game->putHandPanel(field_pos);
-        can_put = false;
+    switch (playing_mode) {
+    case TITLE:
+      if (event.isLeft() && !mouse_draged) {
+        // ゲーム開始
+        game->beginPlay();
+        playing_mode = GAMEMAIN;
       }
-    }
-    else if (event.isRight()) {
-      // パネルを回転
-      game->rotationHandPanel();
-      can_put = game->canPutToBlank(field_pos);
+      break;
+
+    case GAMEMAIN:
+      if (game->isPlaying()) {
+        if (event.isLeft() && !mouse_draged) {
+          // パネルを配置
+          if (can_put) {
+            game->putHandPanel(field_pos);
+            can_put = false;
+          }
+        }
+        else if (event.isRight()) {
+          // パネルを回転
+          game->rotationHandPanel();
+          can_put = game->canPutToBlank(field_pos);
+        }
+      }
+      break;
+
+    case RESULT:
+      if (event.isLeft() && !mouse_draged) {
+        // 再ゲーム
+        game = std::make_shared<ngs::Game>(panels);
+        playing_mode = TITLE;
+      }
+      break;
     }
   }
 
@@ -147,6 +181,14 @@ public:
   void keyDown(KeyEvent event) override {
     int code = event.getCode();
     pressing_key.insert(code);
+
+#ifdef DEBUG
+    if (code == KeyEvent::KEY_r) {
+      // 強制リセット
+      game = std::make_shared<ngs::Game>(panels);
+      playing_mode = TITLE;
+    }
+#endif
   }
 
   void keyUp(KeyEvent event) override {
@@ -156,6 +198,26 @@ public:
 
 
 	void update() override {
+    game->update();
+    
+    switch (playing_mode) {
+    case TITLE:
+      {
+      }
+      break;
+
+    case GAMEMAIN:
+      if (!game->isPlaying()) {
+        // 結果画面へ
+        playing_mode = RESULT;
+      }
+      break;
+
+    case RESULT:
+      {
+      }
+      break;
+    }
   }
 
   
@@ -172,18 +234,19 @@ public:
     const auto& panels = game->getFieldPanels();
     ngs::drawFieldPanels(panels, view);
 
-    // 置ける場所
-    const auto& blank = game->getBlankPositions();
-    ngs::drawFieldBlank(blank, view);
+    if (game->isPlaying()) {
+      // 置ける場所
+      const auto& blank = game->getBlankPositions();
+      ngs::drawFieldBlank(blank, view);
 
-    if (can_put) { 
-      drawFieldSelected(field_pos, view);
+      if (can_put) { 
+        drawFieldSelected(field_pos, view);
+      }
+      
+      // 手持ちパネル
+      glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
+      ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
     }
-
-
-    // 手持ちパネル
-    glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
-    ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
   }
 
 };
