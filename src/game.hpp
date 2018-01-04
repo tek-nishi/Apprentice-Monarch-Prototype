@@ -53,8 +53,72 @@ struct Game {
     return can_put;
   }
 
-
   // 操作
+  void putHandPanel(glm::ivec2 field_pos) {
+    field.addPanel(hand_panel, field_pos, hand_rotation);
+
+    {
+      // 森完成チェック
+      auto completed = isCompleteAttribute(Panel::FOREST, field_pos, field, panels);
+      if (!completed.empty()) {
+        // 得点
+        DOUT << "Forest: " << completed.size() << '\n';
+        u_int deep_num = 0;
+        for (const auto& comp : completed) {
+          DOUT << " Point: " << comp.size() << '\n';
+
+          // 深い森
+          bool deep = isDeepForest(comp, field, panels);
+          if (deep) {
+            deep_num += 1;
+          }
+          deep_forest.push_back(deep ? 1 : 0);
+        }
+        DOUT << "  Deep: " << deep_num 
+             << std::endl;
+
+        // TIPS コンテナ同士の連結
+        std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_forests));
+      }
+    }
+    {
+      // 道完成チェック
+      auto completed = isCompleteAttribute(Panel::PATH, field_pos, field, panels);
+      if (!completed.empty()) {
+        // 得点
+        DOUT << "  Path: " << completed.size() << '\n';
+        for (const auto& comp : completed) {
+          DOUT << " Point: " << comp.size() << '\n';
+        }
+        DOUT << std::endl;
+
+        // TIPS コンテナ同士の連結
+        std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_path));
+      }
+    }
+    {
+      // 教会完成チェック
+      auto completed = isCompleteChurch(field_pos, field, panels);
+      if (!completed.empty()) {
+        // 得点
+        DOUT << "Church: " << completed.size() << std::endl;
+              
+        // TIPS コンテナ同士の連結
+        std::copy(std::begin(completed), std::end(completed), std::back_inserter(completed_church));
+      }
+    }
+
+    fieldUpdate();
+
+    // 全パネルを使い切った
+    if (waiting_panels.empty()) {
+      DOUT << "Put all cards." << std::endl;
+    }
+
+    // 新しいパネル
+    getNextPanel();
+  }
+
   void rotationHandPanel() {
     hand_rotation = (hand_rotation + 1) % 4;
   }

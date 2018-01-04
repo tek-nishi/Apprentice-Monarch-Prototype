@@ -72,9 +72,7 @@ public:
   }
 
 
-  void mouseMove(MouseEvent event) override {
-    // フィールド上での座標を計算
-    Vec2i pos = event.getPos();
+  void calcFieldPos(Vec2i pos) {
     float x = pos.x / float(getWindowWidth());
     float y = 1.0f - pos.y / float(getWindowHeight());
 
@@ -106,6 +104,12 @@ public:
     }
   }
 
+  void mouseMove(MouseEvent event) override {
+    // フィールド上での座標を計算
+    Vec2i pos = event.getPos();
+    calcFieldPos(pos);
+  }
+
   void mouseDown(MouseEvent event) override {
     if (!event.isLeft()) return;
 
@@ -127,10 +131,15 @@ public:
   void mouseUp(MouseEvent event) override {
     if (event.isLeft() && !mouse_draged) {
       // パネルを配置
+      if (can_put) {
+        game->putHandPanel(field_pos);
+        can_put = false;
+      }
     }
     else if (event.isRight()) {
       // パネルを回転
       game->rotationHandPanel();
+      can_put = game->canPutToBlank(field_pos);
     }
   }
 

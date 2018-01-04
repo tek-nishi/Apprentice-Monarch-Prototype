@@ -115,9 +115,9 @@ View createView() {
 void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view) {
   const float r_tbl[] = {
     0.0f,
-    180.0f * 0.5f,
-    180.0f,
-    180.0f * 1.5f 
+    -180.0f * 0.5f,
+    -180.0f,
+    -180.0f * 1.5f 
   };
 
   ci::gl::pushModelView();
@@ -163,28 +163,3 @@ void drawFieldSelected(glm::ivec2 pos, const View& view) {
 
 }
 
-#if 0
-
-
-
-// Grid表示
-void drawFieldGrid() {
-  // 繰り返し回数から決まる
-  int start = -PANEL_SIZE * (GRID_NUM / 2) - PANEL_SIZE / 2;
-
-  for (int x = 0; x <= GRID_NUM; ++x) {
-    drawLine(start + x * PANEL_SIZE, start,
-             start + x * PANEL_SIZE, start + PANEL_SIZE * GRID_NUM,
-             1,
-             Color(0.5, 0.5, 0.5));
-  }
-
-  for (int y = 0; y <= GRID_NUM; ++y) {
-    drawLine(start,                         start + y * PANEL_SIZE,
-             start + PANEL_SIZE * GRID_NUM, start + y * PANEL_SIZE,
-             1,
-             Color(0.5, 0.5, 0.5));
-  }
-}
-
-#endif

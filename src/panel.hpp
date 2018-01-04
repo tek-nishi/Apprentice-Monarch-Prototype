@@ -29,9 +29,9 @@ struct Panel {
     : attribute_(attribute),
       edge_(4)
   {
-    edge_[0] = edge_up;
+    edge_[0] = edge_bottom;
     edge_[1] = edge_right;
-    edge_[2] = edge_bottom;
+    edge_[2] = edge_up;
     edge_[3] = edge_left;
   }
 
