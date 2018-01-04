@@ -5,6 +5,7 @@
 #include "Defines.hpp"
 #include <cinder/app/AppNative.h>
 #include <cinder/gl/gl.h>
+#include <cinder/gl/Texture.h>
 #include <cinder/Camera.h>
 #include <cinder/Arcball.h>
 #include <glm/glm.hpp>
@@ -19,6 +20,10 @@ using namespace ci::app;
 
 
 class TestProjectApp : public AppNative {
+  float fov = 25.0f;
+  float distance = 150.0f;
+
+  CameraPersp bg_camera;
   CameraPersp field_camera;
   CameraOrtho ui_camera;
 
@@ -58,6 +63,8 @@ class TestProjectApp : public AppNative {
 
   u_int frame_counter = 0;
 
+  // 背景
+  // gl::Texture bg_image;
 
 
 
@@ -73,13 +80,22 @@ public:
     // FIXME OSXでタイトルバーにアプリ名を表示するworkaround
     getWindow()->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
 #endif
-    
-     field_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
-                               35.0f,
+
+#if 0
+    // 遠景用カメラ
+    bg_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
+                            fov,
+                            1.0f, 1000.0f);
+
+    bg_camera.setEyePoint(Vec3f(0.0f, 0.0f, 0.0f));
+    bg_camera.setCenterOfInterestPoint(Vec3f(0.0f, 0.0f, 1.0f));
+#endif
+
+    field_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
+                               fov,
                                1.0f, 1000.0f);
 
-    // TIPS EyePoint→CenterOfInterestPointの順序で初期化する
-    field_camera.setEyePoint(Vec3f(0.0f, 100.0f, -150.0f));
+    field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -distance));
     field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
 
     // UIカメラ
@@ -112,6 +128,9 @@ public:
     }
 
     jpn_font = std::make_shared<ngs::Font>("DFHSM5001.ttf");
+
+    // 背景
+    // bg_image = loadImage(loadAsset("bg.png"));
   }
 
 
@@ -266,16 +285,38 @@ public:
     gl::clear(Color(0, 0, 0));
 
     // 本編
+    gl::disableAlphaBlending();
+
+    Quatf rotate = arcball.getQuat();
+    Matrix44f m = rotate.toMatrix44();
+
+#if 0
+    // 遠景
+    gl::setMatrices(bg_camera);
+    gl::multModelView(m);
+
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    gl::enable(GL_CULL_FACE);
+    bg_image.enableAndBind();
+
+    // 球の半径をマイナスにしているので、見た目に上下左右が反転している
+    // それを解消するために回転している
+    gl::rotate(Vec3f(0, 0, 180));
+
+    // 球を内側から見る→画像が左右反転する
+    // これを解決する方法の１つとして半径をマイナスの値にする
+    gl::drawSphere(Vec3f(0.0f, 0.0f, 0.0f), -50.0, 32);
+    bg_image.disable();
+#endif
+
+    // プレイ画面
+    gl::setMatrices(field_camera);
+    gl::multModelView(m);
+
     gl::enableDepthRead();
     gl::enableDepthWrite();
     gl::enable(GL_CULL_FACE);
-    gl::disableAlphaBlending();
-
-    gl::setMatrices(field_camera);
-    
-    Quatf rotate = arcball.getQuat();
-    Matrix44f m = rotate.toMatrix44();
-    gl::multModelView(m);
 
     // フィールド
     const auto& panels = game->getFieldPanels();
@@ -294,6 +335,7 @@ public:
       glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
     }
+    drawFieldBg(view);
 
     // UI
     gl::disableDepthRead();

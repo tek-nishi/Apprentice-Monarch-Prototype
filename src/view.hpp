@@ -5,6 +5,7 @@
 //
 
 #include <cinder/TriMesh.h>
+#include <cinder/gl/Vbo.h>
 #include "PLY.hpp"
 
 
@@ -18,11 +19,12 @@ enum {
 
 struct View {
   // パネル
-  std::vector<ci::TriMesh> panel_models;
+  std::vector<ci::gl::VboMeshRef> panel_models;
 
-  ci::TriMesh blank_model;
-  ci::TriMesh selected_model;
+  ci::gl::VboMeshRef blank_model;
+  ci::gl::VboMeshRef selected_model;
 
+  ci::gl::VboMeshRef bg_model; 
 };
 
 
@@ -102,11 +104,13 @@ View createView() {
 
   View view;
   for (const auto& file : model_files) {
-    view.panel_models.push_back(PLY::load(file));
+    auto mesh = ci::gl::VboMesh::create(PLY::load(file));
+    view.panel_models.push_back(mesh);
   }
 
-  view.blank_model = PLY::load("blank.ply");
-  view.selected_model = PLY::load("selected.ply");
+  view.blank_model    = ci::gl::VboMesh::create(PLY::load("blank.ply"));
+  view.selected_model = ci::gl::VboMesh::create(PLY::load("selected.ply"));
+  view.bg_model       = ci::gl::VboMesh::create(PLY::load("bg.ply"));
 
   return view;
 }
@@ -160,6 +164,30 @@ void drawFieldSelected(glm::ivec2 pos, const View& view) {
   ci::gl::popModelView();
 }
 
+// 背景
+void drawFieldBg(const View& view) {
+  // TIPS OpenGLの設定を直接操作している
+  // FOG機能を有効にする
+  ci::gl::enable(GL_FOG);
+	glFogi(GL_FOG_MODE, GL_LINEAR);
+
+  // GL_LINEARで使用する近景位置
+	glFogf(GL_FOG_START, 100.0f);
+  // GL_LINEARで使用する遠景位置
+	glFogf(GL_FOG_END, 400.0f);
+
+  // 色指定
+  GLfloat fog_color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  glFogfv(GL_FOG_COLOR, fog_color);
+
+  ci::gl::pushModelView();
+  ci::gl::translate(10, -10.0, 10);
+  ci::gl::scale(20.0, 2.0, 20.0);
+  ci::gl::draw(view.bg_model);
+  ci::gl::popModelView();
+  
+  ci::gl::disable(GL_FOG);
+}
 
 }
 
