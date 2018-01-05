@@ -23,7 +23,8 @@ using namespace ci::app;
 
 
 class TestProjectApp : public AppNative {
-  float fov = 25.0f;
+  float fov    = 25.0f;
+  float near_z = 1.0f;
   float distance = 160.0f;
 
   CameraPersp bg_camera;
@@ -126,7 +127,7 @@ public:
 
     field_camera = CameraPersp(getWindowWidth(), getWindowHeight(),
                                fov,
-                               1.0f, 1000.0f);
+                               near_z, 1000.0f);
 
     field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -distance));
     field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 0.0f, 0.0f));
@@ -397,7 +398,36 @@ public:
     frame_counter += 1;
   }
 
-  
+
+  void resize() override {
+    float aspect = getWindowAspectRatio();
+    field_camera.setAspectRatio(aspect);
+    if (aspect < 1.0) {
+      // 画面が縦長になったら、幅基準でfovを求める
+      // fovとnear_zから投影面の幅の半分を求める
+      float half_w = std::tan(toRadians(fov / 2)) * near_z;
+
+      // 表示画面の縦横比から、投影面の高さの半分を求める
+      float half_h = half_w / aspect;
+
+      // 投影面の高さの半分とnear_zから、fovが求まる
+      float fov_w = std::atan(half_h / near_z) * 2;
+      field_camera.setFov(toDegrees(fov_w));
+    }
+    else {
+      // 横長の場合、fovは固定
+      field_camera.setFov(fov);
+    }
+    
+    auto half_size = getWindowSize() / 2;
+    ui_camera = CameraOrtho(-half_size.x, half_size.x,
+                            -half_size.y, half_size.y,
+                            -1, 1);
+    ui_camera.setEyePoint(Vec3f(0, 0, 0));
+    ui_camera.setCenterOfInterestPoint(Vec3f(0, 0, -1));
+  }
+
+
 	void draw() override {
     gl::clear(Color(0, 0, 0));
 
