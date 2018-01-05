@@ -70,6 +70,11 @@ class TestProjectApp : public AppNative {
 
   u_int frame_counter = 0;
 
+  // 表示用スコア
+  std::vector<int> game_score;
+  std::vector<int> game_score_effect;
+
+
   // 背景
   // gl::Texture bg_image;
 
@@ -213,6 +218,11 @@ public:
         // ゲーム開始
         game->beginPlay();
         playing_mode = GAMESTART;
+        
+        game_score = game->getScores();
+        game_score_effect.resize(game_score.size());
+        std::fill(std::begin(game_score_effect), std::end(game_score_effect), 0);
+
         counter.add("gamestart", 90);
       }
       break;
@@ -327,6 +337,8 @@ public:
     case GAMEEND:
       {
         if (!counter.check("gameend")) {
+          game_score = game->getScores();
+          std::fill(std::begin(game_score_effect), std::end(game_score_effect), 0);
           playing_mode = RESULT;
           DOUT << "RESULT." << std::endl;
         }
@@ -519,6 +531,17 @@ private:
     jpn_font->size(font_size);
 
     const auto& scores = game->getScores();
+    // 変動した箇所の色を変える演出用
+    for (size_t i = 0; i < scores.size(); ++i) {
+      if (game_score[i] != scores[i]) {
+        game_score_effect[i] = 60;
+      }
+      game_score[i] = scores[i];
+    }
+
+    for (auto& i : game_score_effect) {
+      i = std::max(i - 1, 0);
+    }
 
     const char* text[] = {
       u8"道の数:   %d",
@@ -533,9 +556,12 @@ private:
 
     u_int i = 0;
     for (const auto* t : text) {
+      ColorA col = game_score_effect[i] ? ColorA(1, 0, 0, 1)
+                                        : ColorA(1, 1, 1, 1);
+
       char buffer[100];
-      sprintf(buffer, t, scores[i]);
-      jpn_font->draw(buffer, pos, ColorA(1, 1, 1, 1));
+      sprintf(buffer, t, game_score[i]);
+      jpn_font->draw(buffer, pos,col);
 
       pos.y += next_y;
       i += 1;

@@ -154,7 +154,7 @@ std::vector<Panel> createPanels() {
 
     { 0, Panel::PATH, Panel::GRASS, Panel::PATH, Panel::GRASS },
     { 0, Panel::FOREST, Panel::GRASS, Panel::FOREST, Panel::GRASS },
-    { 0, Panel::FOREST | Panel::EDGE, Panel::GRASS, Panel::PATH, Panel::GRASS },
+    { 0, Panel::FOREST | Panel::EDGE, Panel::GRASS, Panel::GRASS, Panel::GRASS },
     { 0, Panel::PATH, Panel::FOREST | Panel::EDGE, Panel::PATH, Panel::GRASS },
   };
 
