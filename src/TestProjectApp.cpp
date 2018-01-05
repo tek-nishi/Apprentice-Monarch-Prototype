@@ -468,8 +468,14 @@ public:
         u_int minutes = remainig_time / 60;
         u_int seconds = remainig_time % 60;
         sprintf(text, "%d'%02d", minutes, seconds);
-        
-        font->draw(text, Vec2f(remain_time_x, 280), ColorA(1, 1, 1, 1));
+
+        // 時間が10秒切ったら色を変える
+        ColorA color(1, 1, 1, 1);
+        if (remainig_time <= 10) {
+          color = ColorA(1, 0, 0, 1);
+        }
+
+        font->draw(text, Vec2f(remain_time_x, 280), color);
       }
       drawGameInfo(25, Vec2f(-500, 0), -40);
       break;
