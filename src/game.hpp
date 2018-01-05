@@ -200,11 +200,23 @@ struct Game {
       return;
     }
 
+#if 0
     // パネルをどこかに置けるか調べる
     if (!canPanelPutField(panels[hand_panel], blank,
                           field, panels)) {
       // 置けない…
       DOUT << "Can't put panel." << std::endl;
+      endPlay();
+      return;
+    }
+#endif
+  }
+
+  // 強制的に次のカード
+  void forceNextHandPanel() {
+    if (!getNextPanel()) {
+      // 全パネルを使い切った
+      DOUT << "End of panels." << std::endl;
       endPlay();
       return;
     }

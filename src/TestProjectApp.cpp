@@ -337,6 +337,20 @@ public:
       game->changePanelForced(1);
     }
 #endif
+
+    switch (playing_mode) {
+    case GAMEMAIN:
+      {
+        // 強制的に次のカードを引く
+        if (code == KeyEvent::KEY_f) {
+          game->forceNextHandPanel();
+          rotate_offset = 0.0f;
+          hight_offset  = 500.0f;
+          can_put = false;
+        }
+      }
+      break;
+    }
   }
 
   void keyUp(KeyEvent event) override {
