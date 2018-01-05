@@ -340,7 +340,7 @@ public:
 
     switch (playing_mode) {
     case GAMEMAIN:
-      {
+      if (game->isPlaying()) {
         // 強制的に次のカードを引く
         if (code == KeyEvent::KEY_f) {
           game->forceNextHandPanel();
@@ -431,6 +431,14 @@ public:
     else {
       // 横長の場合、fovは固定
       field_camera.setFov(fov);
+    }
+
+    {
+      // Arcball再設定
+      auto q = arcball.getQuat();
+
+      arcball = Arcball(getWindowSize());
+      arcball.setQuat(q);
     }
     
     auto half_size = getWindowSize() / 2;
