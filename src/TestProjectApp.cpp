@@ -14,6 +14,7 @@
 #include "game.hpp"
 #include "view.hpp"
 #include "font.hpp"
+#include "counter.hpp"
 
 
 using namespace ci;
@@ -44,10 +45,15 @@ class TestProjectApp : public AppNative {
 
   enum {
     TITLE,
+    GAMESTART,        // 開始演出
     GAMEMAIN,
+    GAMEEND,          // 終了演出
     RESULT,
   };
   int playing_mode = TITLE;
+
+  // 汎用カウンタ
+  ngs::Counter counter;
 
 
   // 表示関連
@@ -206,10 +212,12 @@ public:
       if (event.isLeft() && !mouse_draged) {
         // ゲーム開始
         game->beginPlay();
-        playing_mode = GAMEMAIN;
+        playing_mode = GAMESTART;
+        counter.add("gamestart", 60);
       }
       break;
 
+    case GAMESTART:
     case GAMEMAIN:
       if (game->isPlaying()) {
         if (event.isLeft() && !mouse_draged) {
@@ -227,6 +235,7 @@ public:
       }
       break;
 
+    case GAMEEND:
     case RESULT:
       if (event.isLeft() && !mouse_draged) {
         // 再ゲーム
@@ -285,6 +294,7 @@ public:
 
 
 	void update() override {
+    counter.update();
     game->update();
     
     switch (playing_mode) {
@@ -293,10 +303,29 @@ public:
       }
       break;
 
+    case GAMESTART:
+      {
+        if (!counter.check("gamestart")) {
+          playing_mode = GAMEMAIN;
+          DOUT << "GAMEMAIN." << std::endl;
+        }
+      }
+      break;
+
     case GAMEMAIN:
       if (!game->isPlaying()) {
         // 結果画面へ
-        playing_mode = RESULT;
+        playing_mode = GAMEEND;
+        counter.add("gameend", 120);
+      }
+      break;
+
+    case GAMEEND:
+      {
+        if (!counter.check("gameend")) {
+          playing_mode = RESULT;
+          DOUT << "RESULT." << std::endl;
+        }
       }
       break;
 
@@ -365,8 +394,10 @@ public:
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
 #ifdef DEBUG
       if (disp_debug_info) {
+        // 手元のパネル
         ngs::drawPanelEdge(panels[game->getHandPanel()], pos, game->getHandRotation());
 
+        // 置こうとしている場所の周囲
         auto around = game->enumerateAroundPanels(field_pos);
         if (!around.empty()) {
           for (auto it : around) {
