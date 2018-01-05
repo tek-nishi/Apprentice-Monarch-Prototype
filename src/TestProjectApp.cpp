@@ -68,7 +68,9 @@ class TestProjectApp : public AppNative {
   glm::ivec2 field_pos;
   bool can_put = false;
 
+  // 手持ちパネル演出用
   float rotate_offset = 0.0f;
+  float hight_offset  = 0.0f;
 
 
   // 残り時間表示位置(xのみ)
@@ -257,6 +259,7 @@ public:
           if (can_put) {
             game->putHandPanel(field_pos);
             rotate_offset = 0.0f;
+            hight_offset  = 500.0f;
             can_put = false;
             
             sound->play("panel-set");
@@ -444,7 +447,8 @@ public:
       
       // 手持ちパネル
       rotate_offset *= 0.8f;
-      glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
+      hight_offset  *= 0.8f;
+      glm::vec3 pos(cursor_pos.x, cursor_pos.y + hight_offset, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view, rotate_offset);
 #ifdef DEBUG
       if (disp_debug_info) {
