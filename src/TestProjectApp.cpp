@@ -195,15 +195,18 @@ public:
 
     // 地面との交差を調べ、正確な位置を計算
     float z;
-    float on_field = ray.calcPlaneIntersection(Vec3f(0, 10, 0), Vec3f(0, 1, 0), &z);
+    float on_field = ray.calcPlaneIntersection(Vec3f(0, 0, 0), Vec3f(0, 1, 0), &z);
     can_put = false;
     if (on_field) {
       cursor_pos = ray.calcPosition(z);
-
+      
       field_pos.x = ngs::roundValue(cursor_pos.x, ngs::PANEL_SIZE);
       field_pos.y = ngs::roundValue(cursor_pos.z, ngs::PANEL_SIZE);
-
       can_put = game->canPutToBlank(field_pos);
+
+      // 多少違和感を軽減するために位置を再計算
+      ray.calcPlaneIntersection(Vec3f(0, 10, 0), Vec3f(0, 1, 0), &z);
+      cursor_pos = ray.calcPosition(z);
     }
   }
 
@@ -239,7 +242,8 @@ public:
         // ゲーム開始
         game->beginPlay();
         playing_mode = GAMESTART;
-        
+        hight_offset = 500.0f;
+
         game_score = game->getScores();
         game_score_effect.resize(game_score.size());
         std::fill(std::begin(game_score_effect), std::end(game_score_effect), 0);
