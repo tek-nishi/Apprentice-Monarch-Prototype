@@ -30,6 +30,8 @@ class TestProjectApp : public AppNative {
   CameraPersp field_camera;
   CameraOrtho ui_camera;
 
+  glm::vec2 camera_center; 
+
   Arcball arcball;
 
   bool mouse_draged = false;
@@ -125,7 +127,7 @@ public:
                                1.0f, 1000.0f);
 
     field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -distance));
-    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
+    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 0.0f, 0.0f));
 
     // UIカメラ
     auto half_size = getWindowSize() / 2;
@@ -181,6 +183,7 @@ public:
     // 逆行列で掛けてRayをAABB側の座標系に変換
     Quatf rotate = arcball.getQuat();
     Matrix44f m  = rotate.toMatrix44();
+    m = m * Matrix44f::createTranslation(Vec3f(-camera_center.x, -5.0f, -camera_center.y));
     m.invert();
 
     Vec3f dir = m.transformVec(ray.getDirection());
@@ -291,7 +294,7 @@ public:
     distance -= event.getWheelIncrement() * 5.0f;
 
     field_camera.setEyePoint(Vec3f(0.0f, 0.0f, -distance));
-    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 10.0f, 0.0f));
+    field_camera.setCenterOfInterestPoint(Vec3f(0.0f, 0.0f, 0.0f));
   }
 
 
@@ -337,7 +340,11 @@ public:
 	void update() override {
     counter.update();
     game->update();
-    
+
+    // カメラの中心位置変更
+    auto center_pos = game->getFieldCenter() * float(ngs::PANEL_SIZE);
+    camera_center += (center_pos - camera_center) * 0.05f;
+
     switch (playing_mode) {
     case TITLE:
       {
@@ -416,6 +423,7 @@ public:
     // プレイ画面
     gl::setMatrices(field_camera);
     gl::multModelView(m);
+    gl::translate(-camera_center.x, -5.0, -camera_center.y);
 
     gl::enableDepthRead();
     gl::enableDepthWrite();

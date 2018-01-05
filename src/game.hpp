@@ -233,6 +233,10 @@ struct Game {
     return blank;
   };
 
+  glm::vec2 getFieldCenter() const {
+    return field_center;
+  }
+
 
   // プレイ中のスコア
   const std::vector<int>& getScores() const {
@@ -341,6 +345,8 @@ private:
   std::vector<PanelStatus> field_panels;
   // 列挙した置ける箇所
   std::vector<glm::ivec2> blank;
+  // なんとなく中心位置
+  glm::vec2 field_center;
 
 
   bool getNextPanel() {
@@ -361,6 +367,14 @@ private:
   void fieldUpdate() {
     field_panels = field.enumeratePanels();
     blank        = field.searchBlank();
+
+    // 中心座標をなんとなく計算
+    glm::vec2 center;
+    for (auto p  : field_panels) {
+      center += p.position;
+    }
+    center /= float(field_panels.size());
+    field_center = center; 
   }
 
   // スコア更新
