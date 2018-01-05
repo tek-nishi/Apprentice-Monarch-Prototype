@@ -15,6 +15,7 @@
 #include "view.hpp"
 #include "font.hpp"
 #include "counter.hpp"
+#include "sound.hpp"
 
 
 using namespace ci;
@@ -80,6 +81,13 @@ class TestProjectApp : public AppNative {
 
   // 背景
   // gl::Texture bg_image;
+
+
+  // サウンド
+  //   FIXME デフォルトコンストラクタで初期化できないのでスマポ
+  std::shared_ptr<ngs::Sound> sound;
+
+
 
 #ifdef DEBUG
   bool disp_debug_info = false;
@@ -154,6 +162,11 @@ public:
 
     // 背景
     // bg_image = loadImage(loadAsset("bg.png"));
+
+    // サウンド
+    sound = std::make_shared<ngs::Sound>();
+
+    sound->play("title");
   }
 
 
@@ -227,6 +240,9 @@ public:
         std::fill(std::begin(game_score_effect), std::end(game_score_effect), 0);
 
         counter.add("gamestart", 90);
+
+        sound->stop("title");
+        sound->play("agree");
       }
       break;
 
@@ -239,6 +255,8 @@ public:
             game->putHandPanel(field_pos);
             rotate_offset = 0.0f;
             can_put = false;
+            
+            sound->play("panel-set");
           }
         }
         else if (event.isRight()) {
@@ -246,6 +264,8 @@ public:
           game->rotationHandPanel();
           rotate_offset = 90.0f;
           can_put = game->canPutToBlank(field_pos);
+
+          sound->play("panel-rotate");
         }
       }
       break;
@@ -260,6 +280,8 @@ public:
         // 再ゲーム
         game = std::make_shared<ngs::Game>(panels);
         playing_mode = TITLE;
+        
+        sound->play("agree");
       }
       break;
     }
@@ -336,6 +358,8 @@ public:
         // 結果画面へ
         playing_mode = GAMEEND;
         counter.add("gameend", 120);
+
+        sound->play("gameover");
       }
       break;
 
@@ -610,7 +634,6 @@ private:
       font->draw(text, Vec2f(0, -100), ColorA(1, 1, 1, 1));
     }
   }
-
 
 };
 
