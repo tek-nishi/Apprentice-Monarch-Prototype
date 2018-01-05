@@ -67,6 +67,9 @@ class TestProjectApp : public AppNative {
   // 背景
   // gl::Texture bg_image;
 
+#ifdef DEBUG
+  bool disp_debug_info = false;
+#endif
 
 
 public:
@@ -261,6 +264,10 @@ public:
       game->endPlay();
     }
 
+    if (code == KeyEvent::KEY_d) {
+      disp_debug_info = !disp_debug_info;
+    }
+
     // 手持ちパネル強制変更
     if (code == KeyEvent::KEY_b) {
       game->changePanelForced(-1);
@@ -268,7 +275,6 @@ public:
     else if (code == KeyEvent::KEY_n) {
       game->changePanelForced(1);
     }
-
 #endif
   }
 
@@ -358,7 +364,22 @@ public:
       glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
 #ifdef DEBUG
-      ngs::drawPanelEdge(panels[game->getHandPanel()], pos, game->getHandRotation());
+      if (disp_debug_info) {
+        ngs::drawPanelEdge(panels[game->getHandPanel()], pos, game->getHandRotation());
+
+        auto around = game->enumerateAroundPanels(field_pos);
+        if (!around.empty()) {
+          for (auto it : around) {
+            glm::ivec2 pos = it.first;
+            pos *= int(ngs::PANEL_SIZE);
+
+            glm::vec3 p(pos.x, 0.0f, pos.y);
+
+            auto status = it.second;
+            ngs::drawPanelEdge(panels[status.number], p, status.rotation);
+          }
+        }
+      }
 #endif
 
     }

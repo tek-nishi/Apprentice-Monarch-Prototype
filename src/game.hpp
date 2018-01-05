@@ -276,7 +276,31 @@ struct Game {
     else if (hand_panel >= panels.size()) {
       hand_panel = 0;
     }
+    DOUT << "hand: " << hand_panel << std::endl; 
   }
+
+  // 指定位置周囲のパネルを取得
+  std::map<glm::ivec2, PanelStatus, LessVec<glm::ivec2>> enumerateAroundPanels(glm::ivec2 pos) const {
+    // 時計回りに調べる
+    const glm::ivec2 offsets[] = {
+      {  0,  1 },
+      {  1,  0 },
+      {  0, -1 },
+      { -1,  0 },
+    };
+
+    std::map<glm::ivec2, PanelStatus, LessVec<glm::ivec2>> around_panels;
+    for (const auto& ofs : offsets) {
+      auto p = pos + ofs;
+      if (!field.existsPanel(p)) continue;
+
+      const auto& panel_status = field.getPanelStatus(p);
+      around_panels.insert({ p, panel_status });
+    }
+
+    return around_panels;
+  }
+
 #endif
 
 
