@@ -65,6 +65,9 @@ class TestProjectApp : public AppNative {
   glm::ivec2 field_pos;
   bool can_put = false;
 
+  float rotate_offset = 0.0f;
+
+
   // 残り時間表示位置(xのみ)
   int remain_time_x;
 
@@ -234,12 +237,14 @@ public:
           // パネルを配置
           if (can_put) {
             game->putHandPanel(field_pos);
+            rotate_offset = 0.0f;
             can_put = false;
           }
         }
         else if (event.isRight()) {
           // パネルを回転
           game->rotationHandPanel();
+          rotate_offset = 90.0f;
           can_put = game->canPutToBlank(field_pos);
         }
       }
@@ -406,8 +411,9 @@ public:
       }
       
       // 手持ちパネル
+      rotate_offset *= 0.8f;
       glm::vec3 pos(cursor_pos.x, cursor_pos.y, cursor_pos.z);
-      ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view);
+      ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view, rotate_offset);
 #ifdef DEBUG
       if (disp_debug_info) {
         // 手元のパネル

@@ -161,7 +161,7 @@ void drawPanelEdge(const Panel& panel, glm::vec3 pos, u_int rotation) {
 #endif
 
 // パネルを１枚表示
-void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view) {
+void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view, float rotate_offset) {
   const float r_tbl[] = {
     0.0f,
     -180.0f * 0.5f,
@@ -171,13 +171,13 @@ void drawPanel(int number, glm::vec3 pos, u_int rotation, const View& view) {
 
   ci::gl::pushModelView();
   ci::gl::translate(pos.x, pos.y, pos.z);
-  ci::gl::rotate(ci::Vec3f(0.0f, r_tbl[rotation], 0.0f));
+  ci::gl::rotate(ci::Vec3f(0.0f, r_tbl[rotation] + rotate_offset, 0.0f));
   ci::gl::draw(view.panel_models[number]);
   ci::gl::popModelView();
 }
 
 void drawPanel(int number, glm::ivec2 pos, u_int rotation, const View& view) {
-  drawPanel(number, glm::vec3(pos.x, 0.0f, pos.y), rotation, view);
+  drawPanel(number, glm::vec3(pos.x, 0.0f, pos.y), rotation, view, 0.0f);
 }
 
 // Fieldのパネルをすべて表示
