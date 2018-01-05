@@ -213,7 +213,7 @@ public:
         // ゲーム開始
         game->beginPlay();
         playing_mode = GAMESTART;
-        counter.add("gamestart", 60);
+        counter.add("gamestart", 90);
       }
       break;
 
@@ -236,6 +236,10 @@ public:
       break;
 
     case GAMEEND:
+      {
+      }
+      break;
+
     case RESULT:
       if (event.isLeft() && !mouse_draged) {
         // 再ゲーム
@@ -444,6 +448,16 @@ public:
       }
       break;
 
+    case GAMESTART:
+      {
+        font->size(90);
+        const char* text = "Secure the territory!";
+
+        auto size = font->drawSize(text);
+        font->draw(text, Vec2f(-size.x / 2.0f, -size.y / 2.0f), ColorA(1, 1, 1, 1));
+      }
+      break;
+
     case GAMEMAIN:
       {
         // 残り時間
@@ -458,6 +472,16 @@ public:
         font->draw(text, Vec2f(remain_time_x, 280), ColorA(1, 1, 1, 1));
       }
       drawGameInfo(25, Vec2f(-500, 0), -40);
+      break;
+
+    case GAMEEND:
+      {
+        font->size(90);
+        const char* text = "Well done!";
+
+        auto size = font->drawSize(text);
+        font->draw(text, Vec2f(-size.x / 2.0f, -size.y / 2.0f), ColorA(1, 1, 1, 1));
+      }
       break;
 
     case RESULT:
