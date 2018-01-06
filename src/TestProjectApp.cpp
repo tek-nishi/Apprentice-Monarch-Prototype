@@ -497,8 +497,10 @@ public:
       const auto& blank = game->getBlankPositions();
       ngs::drawFieldBlank(blank, view);
 
-      if (can_put) { 
-        drawFieldSelected(field_pos, view);
+      if (can_put) {
+        float s = 0.9 + std::abs(std::sin(frame_counter * 0.1)) * 0.1;
+        glm::vec3 scale(s, 1, s);
+        drawFieldSelected(field_pos, scale, view);
       }
       
       // 手持ちパネル

@@ -23,6 +23,7 @@ struct View {
 
   ci::gl::VboMeshRef blank_model;
   ci::gl::VboMeshRef selected_model;
+  ci::gl::VboMeshRef cursor_model;
 
   ci::gl::VboMeshRef bg_model; 
 };
@@ -118,6 +119,7 @@ View createView() {
 
   view.blank_model    = ci::gl::VboMesh::create(PLY::load("blank.ply"));
   view.selected_model = ci::gl::VboMesh::create(PLY::load("selected.ply"));
+  view.cursor_model   = ci::gl::VboMesh::create(PLY::load("cursor.ply"));
   view.bg_model       = ci::gl::VboMesh::create(PLY::load("bg.ply"));
 
   return view;
@@ -200,11 +202,12 @@ void drawFieldBlank(const std::vector<glm::ivec2>& blank, const View& view) {
 }
 
 // 置けそうな箇所をハイライト
-void drawFieldSelected(glm::ivec2 pos, const View& view) {
+void drawFieldSelected(glm::ivec2 pos, glm::vec3 scale, const View& view) {
   glm::ivec2 p = pos * int(PANEL_SIZE);
 
   ci::gl::pushModelView();
   ci::gl::translate(p.x, 0.0f, p.y);
+  ci::gl::scale(scale.x, scale.y, scale.z);
   ci::gl::draw(view.selected_model);
   ci::gl::popModelView();
 }
