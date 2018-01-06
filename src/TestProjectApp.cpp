@@ -10,6 +10,7 @@
 #include <cinder/Arcball.h>
 #include <cinder/Rand.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 #include <set>
 #include "game.hpp"
 #include "view.hpp"
@@ -34,6 +35,7 @@ class TestProjectApp : public AppNative {
   glm::vec2 camera_center; 
 
   Arcball arcball;
+  glm::vec2 left_click_pos;
 
   bool mouse_draged = false;
   
@@ -225,14 +227,20 @@ public:
 
     Vec2i pos = event.getPos();
     arcball.mouseDown(pos);
+    left_click_pos.x = pos.x;
+    left_click_pos.y = pos.y;
   }
   
   void mouseDrag(MouseEvent event) override {
     if (!event.isLeftDown()) return;
 
+    // クリック位置から3pixel程度の動きは無視
+    Vec2i pos = event.getPos();
+    glm::vec2 p(pos.x, pos.y);
+    if (glm::distance2(left_click_pos, p) < 9.0f) return;
+
     mouse_draged = true;
 
-    Vec2i pos = event.getPos();
     arcball.mouseDrag(pos);
   }
   
