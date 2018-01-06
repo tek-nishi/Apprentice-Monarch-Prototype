@@ -103,7 +103,7 @@ class TestProjectApp : public AppNative {
 
 public:
   void prepareSettings(Settings* settings) override {
-    settings->setWindowSize(1024, 720);
+    settings->setWindowSize(1600, 900);
     settings->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
     // settings->enableHighDensityDisplay(true);
   }
@@ -165,7 +165,7 @@ public:
       remain_time_x = -size.x / 2;
     }
 
-    jpn_font = std::make_shared<ngs::Font>("DFHSM5001.ttf");
+    jpn_font = std::make_shared<ngs::Font>("DFKAIC001.ttf");
 
     // 背景
     // bg_image = loadImage(loadAsset("bg.png"));
@@ -568,7 +568,7 @@ public:
           auto size = font->drawSize(text);
 
           float r = frame_counter * 0.05f;
-          font->draw(text, Vec2f(-size.x / 2, -200), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
+          font->draw(text, Vec2f(-size.x / 2, -300), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
         }
       }
       break;
@@ -600,9 +600,14 @@ public:
           color = ColorA(1, 0, 0, 1);
         }
 
-        font->draw(text, Vec2f(remain_time_x, 280), color);
+        int hh = getWindowHeight() / 2;
+
+        font->draw(text, Vec2f(remain_time_x, hh - 100), color);
       }
-      drawGameInfo(25, Vec2f(-500, 0), -40);
+      {
+        int hw = getWindowWidth() / 2;
+        drawGameInfo(25, Vec2f(-hw + 50, 0), -40);
+      }
       break;
 
     case GAMEEND:
@@ -628,8 +633,9 @@ public:
           std::string text("Left click to title");
           auto size = font->drawSize(text);
 
+          int hh = getWindowHeight() / 2;
           float r = frame_counter * 0.05f;
-          font->draw(text, Vec2f(-size.x / 2, -300), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
+          font->draw(text, Vec2f(-size.x / 2, -hh + 50), ColorA(1, 1, 1, (std::sin(r) + 1.0f) * 0.5f));
         }
         drawResult();
       }
@@ -645,11 +651,16 @@ private:
 
     const auto& scores = game->getScores();
     // 変動した箇所の色を変える演出用
+    bool changed = false;
     for (size_t i = 0; i < scores.size(); ++i) {
       if (game_score[i] != scores[i]) {
         game_score_effect[i] = 60;
+        changed = true;
       }
       game_score[i] = scores[i];
+    }
+    if (changed) {
+      sound->play("complete");
     }
 
     for (auto& i : game_score_effect) {

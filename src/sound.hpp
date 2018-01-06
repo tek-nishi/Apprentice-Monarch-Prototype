@@ -33,6 +33,7 @@ struct Sound {
       { "panel-rotate", "panel-rotate.m4a" },
       { "panel-set",    "panel-set.m4a" },
       { "gameover",     "stageclear.m4a" },
+      { "complete",     "complete.m4a" },
     };
 
     for (const auto& i : info) {
