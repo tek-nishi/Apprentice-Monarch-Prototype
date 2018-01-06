@@ -212,6 +212,15 @@ void drawFieldSelected(glm::ivec2 pos, glm::vec3 scale, const View& view) {
   ci::gl::popModelView();
 }
 
+void drawCursor(glm::vec3 pos, glm::vec3 scale, const View& view) {
+  ci::gl::pushModelView();
+  ci::gl::translate(pos.x, pos.y, pos.z);
+  ci::gl::scale(scale.x, scale.y, scale.z);
+  ci::gl::draw(view.cursor_model);
+  ci::gl::popModelView();
+}
+
+
 // 背景
 void drawFieldBg(const View& view) {
   // TIPS OpenGLの設定を直接操作している

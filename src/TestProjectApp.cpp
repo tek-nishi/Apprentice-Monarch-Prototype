@@ -496,18 +496,23 @@ public:
       // 置ける場所
       const auto& blank = game->getBlankPositions();
       ngs::drawFieldBlank(blank, view);
-
-      if (can_put) {
-        float s = 0.9 + std::abs(std::sin(frame_counter * 0.1)) * 0.1;
-        glm::vec3 scale(s, 1, s);
-        drawFieldSelected(field_pos, scale, view);
-      }
       
       // 手持ちパネル
       rotate_offset *= 0.8f;
       hight_offset  *= 0.8f;
       glm::vec3 pos(cursor_pos.x, cursor_pos.y + hight_offset, cursor_pos.z);
       ngs::drawPanel(game->getHandPanel(), pos, game->getHandRotation(), view, rotate_offset);
+
+      if (can_put) {
+        float s = std::abs(std::sin(frame_counter * 0.1)) * 0.1;
+        glm::vec3 scale(0.9 + s, 1, 0.9 + s);
+        drawFieldSelected(field_pos, scale, view);
+
+        scale.x = 1.0 + s;
+        scale.z = 1.0 + s;
+        drawCursor(pos, scale, view);
+      }
+
 #ifdef DEBUG
       if (disp_debug_info) {
         // 手元のパネル
