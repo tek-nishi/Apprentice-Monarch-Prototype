@@ -4,6 +4,7 @@
 
 #include "glTexture.hpp"
 #include <iostream>
+#include <cinder/app/App.h>
 
 
 namespace ngs {

@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include <set>
+#include <sstream>
 #include "game.hpp"
 #include "view.hpp"
 #include "font.hpp"
@@ -103,7 +104,7 @@ class TestProjectApp : public AppNative {
 
 public:
   void prepareSettings(Settings* settings) override {
-    settings->setWindowSize(1600, 900);
+    settings->setWindowSize(1024, 720);
     settings->setTitle(PREPRO_TO_STR(PRODUCT_NAME));
     // settings->enableHighDensityDisplay(true);
   }
@@ -166,6 +167,7 @@ public:
     }
 
     jpn_font = std::make_shared<ngs::Font>("DFKAIC001.ttf");
+//    jpn_font = std::make_shared<ngs::Font>("HGRSMP.TTF");
 
     // 背景
     // bg_image = loadImage(loadAsset("bg.png"));
@@ -679,7 +681,7 @@ private:
     };
 
     u_int i = 0;
-    for (const auto* t : text) {
+    for (const auto t : text) {
       ColorA col = game_score_effect[i] ? ColorA(1, 0, 0, 1)
                                         : ColorA(1, 1, 1, 1);
 

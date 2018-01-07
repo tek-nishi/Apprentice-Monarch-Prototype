@@ -1,5 +1,6 @@
 ﻿
 #include "Path.hpp"
+#include <cinder/app/App.h>
 
 
 namespace ngs {

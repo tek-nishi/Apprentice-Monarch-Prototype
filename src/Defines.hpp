@@ -38,12 +38,8 @@
 #endif
 
 
-namespace ngs {
-
 // 符号無し整数の別名定義
 using u_char  = unsigned char;
 using u_short = unsigned short;
 using u_int   = unsigned int;
 using u_long  = unsigned long;
-
-}

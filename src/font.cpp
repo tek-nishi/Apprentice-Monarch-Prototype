@@ -5,6 +5,7 @@
 #define FONTSTASH_IMPLEMENTATION
 #include <cstdio>
 #include <iostream>
+#include <cinder/app/App.h>
 #include "font.hpp"
 #include "glTexture.hpp"
 #include "Path.hpp"
